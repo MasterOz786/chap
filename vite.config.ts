@@ -8,8 +8,15 @@ export default defineConfig({
     host: true,
     port: 5173,
     strictPort: true,
+    watch: {
+      usePolling: true,
+      interval: 100,
+    },
   },
   optimizeDeps: {
     exclude: ['lucide-react'],
+  },
+  build: {
+    sourcemap: true,
   },
 });
