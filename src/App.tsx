@@ -4,6 +4,7 @@ import OutputPanel from './components/OutputPanel';
 import ChatInterface from './components/ChatInterface';
 import { PipelineStep } from './types';
 import { Play, Settings, User, Bell, Terminal } from 'lucide-react';
+import TerminalComponent from './components/Terminal';
 
 interface LogMessage {
   timestamp: string;
@@ -22,6 +23,7 @@ function App() {
   const [repoName, setRepoName] = useState('');
   const [logs, setLogs] = useState<LogMessage[]>([]);
   const [showLogs, setShowLogs] = useState(false);
+  const [showTerminal, setShowTerminal] = useState(false);
 
   // WebSocket connection management
   const connectWebSocket = useCallback(() => {
@@ -294,6 +296,15 @@ function App() {
                 </span>
               )}
             </button>
+            <button
+              onClick={() => setShowTerminal(true)}
+              className="flex items-center space-x-2 px-4 py-4 rounded-2xl bg-gray-800 text-white hover:bg-black transition-all duration-300"
+              aria-haspopup="dialog"
+              aria-controls="terminal-modal"
+            >
+              <Terminal className="w-5 h-5" />
+              <span className="text-sm font-medium">VM Terminal</span>
+            </button>
           </div>
         </div>
 
@@ -353,6 +364,34 @@ function App() {
             <ChatInterface websocket={ws} />
           </div>
         </div>
+
+        {/* Terminal Modal */}
+        {showTerminal && (
+          <div
+            id="terminal-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="terminal-modal-title"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+            tabIndex={-1}
+            onClick={() => setShowTerminal(false)}
+          >
+            <div
+              className="bg-white rounded-xl shadow-2xl p-6 max-w-3xl w-full relative"
+              onClick={e => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setShowTerminal(false)}
+                className="absolute top-2 right-2 text-gray-500 hover:text-black text-2xl"
+                aria-label="Close terminal"
+              >
+                &times;
+              </button>
+              <h2 id="terminal-modal-title" className="text-xl font-bold mb-4">VM Terminal</h2>
+              <TerminalComponent />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
